@@ -32,11 +32,13 @@
 <script src="./Parser.js"></script>
 <script type="text/javascript">
 	function $(a){return document.querySelector(a);}
+	window.onload = function(){
 	var markdownText = $('#md').contentWindow.document.body.innerText;
 	console.log(markdownText);
 	var parser = new HyperDown,
     html = parser.makeHtml(markdownText);
     console.log(html);
     document.querySelector(".mark").innerHTML = html;
+    }
 </script>
 </html>
