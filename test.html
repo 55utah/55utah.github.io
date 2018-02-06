@@ -29,7 +29,7 @@
 </body>
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript">
-function $$(a){return document.querySelector(a);}
+
 function save(){
     //var before = $$('#text').contentWindow.document.body.innerText;
     //var text = before + $$('.in').innerText;
@@ -44,18 +44,20 @@ function query(xxx){
 	data:JSON.stringify(xxx),
 	contentType:"application/json;charset=utf-8",
 	success:function(data){
-		$$('.up').innerText = data;
-	}
-	error:function(data){
-		$$('.up').innerText = data;
+		// $$('.up').innerText = data;
+		console.log(data);
 	}
 });
 }
 
 function test1(){
-	var queryStr = {id:0,name:"test",type:"text",value:"hhh"}
+	var queryStr = {id:0,name:"test",type:"text",value:"hhh"};
 	query(queryStr);
 }
+function aa(){
+	console.log(1111);
+}
+aa();
 
 </script>
 </html>
