@@ -1,2 +1,16 @@
-{"id":0,"url":"111.md","title":"the teaching for hyperdown.js","time":"2018/2/6","img":"https://macixsq1.github.io/no-image.png"},
-{"id":1,"url":"222.md","title":"the teaching for hyperdown.js","time":"2018/2/5","img":""}
+{
+	"article1": {
+		"id": 0,
+		"url": "111.md",
+		"title": "the teaching for hyperdown.js",
+		"time": "2018/2/6",
+		"img": "https://macixsq1.github.io/no-image.png"
+	},
+	"article2": {
+		"id": 1,
+		"url": "222.md",
+		"title": "the teaching for hyperdown.js",
+		"time": "2018/2/5",
+		"img": ""
+	}
+}
