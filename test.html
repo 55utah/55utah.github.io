@@ -26,6 +26,7 @@
 <div class="up">123</div>
 <div class="down">234</div>
 <div class="in" contenteditable></div>
+<iframe src="./list.json" style="display:none" id="xxx"></iframe>
 <article class="markdown-body entry-content" itemprop="text" id="mark"></article>
 </body>
 <!-- <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script> -->
@@ -40,6 +41,11 @@
     html = parser.makeHtml(markdownText);
     console.log(html);
     document.querySelector("#mark").innerHTML = html;
+	var p = $('#xxx').contentWindow.document.body.innerText;
+	var xp = JSON.parse(p);
+	console.log(xp);
+	
     }
+    
 </script>
 </html>
