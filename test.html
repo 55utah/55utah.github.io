@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<style type="text/css">
+	div{background-color:pink;cursor: pointer;}
+	.up:hover~.down{
+		background-color:red;
+	}
+	.in{
+		margin: 10px auto;
+		width: 50%;
+		height: 20px;
+		line-height: 20px;
+		/*caret-color:red;*/
+		color:red;
+	}
+	.in:empty::before{
+		content:'aaa';
+	}
+	</style>
+</head>
+<body>
+<div class="up">123</div>
+<div class="down">234</div>
+<div class="in" contenteditable></div>
+<button onclick="test1()">test</button>
+</body>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+function $$(a){return document.querySelector(a);}
+function save(){
+    //var before = $$('#text').contentWindow.document.body.innerText;
+    //var text = before + $$('.in').innerText;
+    //var file = new File([text],"./my.txt",{type:"text/plain"});
+}
+
+function query(xxx){
+	$.ajax({
+	url:"./server_sql.php",
+	async:false,
+	type:"POST",
+	data:JSON.stringify(xxx),
+	contentType:"application/json;charset=utf-8",
+	success:function(data){
+		$$('.up').innerText = data;
+	}
+	error:function(data){
+		$$('.up').innerText = data;
+	}
+});
+}
+
+function test1(){
+	var queryStr = {id:0,name:"test",type:"text",value:"hhh"}
+	query(queryStr);
+}
+
+</script>
+</html>
