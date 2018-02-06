@@ -3,6 +3,7 @@
 <head>
 	<title></title>
 	<meta charset="utf-8">
+	<link href="https://assets-cdn.github.com/assets/github-be0481bef7d9.css" media="all" rel="stylesheet">
 	<style type="text/css">
 	div{background-color:pink;cursor: pointer;}
 	.up:hover~.down{
@@ -25,10 +26,10 @@
 <div class="up">123</div>
 <div class="down">234</div>
 <div class="in" contenteditable></div>
-<div class="mark"></div>
+<article class="markdown-body entry-content" itemprop="text" id="mark"></article>
 </body>
 <!-- <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script> -->
-<iframe src="./111.md" id="md"></iframe>
+<iframe src="./111.md" id="md" style="display: none"></iframe>
 <script src="./Parser.js"></script>
 <script type="text/javascript">
 	function $(a){return document.querySelector(a);}
@@ -38,7 +39,7 @@
 	var parser = new HyperDown,
     html = parser.makeHtml(markdownText);
     console.log(html);
-    document.querySelector(".mark").innerHTML = html;
+    document.querySelector("#mark").innerHTML = html;
     }
 </script>
 </html>
