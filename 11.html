@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+</body>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+	$.ajax({
+		headers: {
+        Accept: "application/json; charset=utf-8"
+        },
+		type:"GET",
+		dataType:"json",
+		date:{"client_id":"c79cafdc368dcd345b55"},
+		url:"https://github.com/login/oauth/authorize",
+		success:function(data){
+			alert(data);
+		}
+	});
+</script>
+</html>
