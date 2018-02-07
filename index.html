@@ -1,80 +1,268 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>utahcoder的github博客</title>
+	<link rel="shortcut icon" href="https://avatars2.githubusercontent.com/u/17704150?s=40&v=4">
 	<style type="text/css">
-		body{
-			background-color: #f2f3f5;
-		}
-		.center{
-			width: 208px;
-			height: auto;
-			margin: 20px auto;
-			box-shadow: 0 1px 3px 0 rgba(80,80,80,.11);
-			border-radius: 8px 8px 0 0;
-		}
-		.up{
-			width: 208px;
-			height: 312px;
-			border-radius: 8px 8px 0 0;
-			overflow: hidden;
-			cursor: pointer;
-			transform: rotate(0deg);
-			-webkit-transform: rotate(0deg);
-			/*这里的rotate(0deg)会解决一个border-radius和scale的bug*/
-		}
-		.down{
-			height:50px;
-			padding: 10px;
-		}
-		.img{
-			width: 100%;
-			height: 100%;
-			background-position: center top;
-			background: url('bg1.jpg') no-repeat;
-			background-size: cover;
-			border-radius: 8px 8px 0 0;
-			transition: transform .3s ease;
-		}
-		.img:hover{
-			transform: scale(1.05);
-			-webkit-transform: scale(1.05);
+	html,body,p{margin: 0px;padding: 0px}
+	body{background-color: #f2f3f5;}
+		header{height: 54px;width: 100%;background-color: #24292e;color:rgba(255,255,255,0.75);box-shadow: 0 0 1px 1px #fff;position: fixed;top:0;left:0;z-index: 99;}
+		.head_block{
+			max-width: 900px;
+			margin: 0px auto;
+			height: 30px;
+			display: flex;
+			display: -webkit-flex;
+			flex-flow:row nowrap;
+			justify-content: space-between;
+			padding-top:12px;
+			padding-bottom:12px;
 		}
 		.name{
-			line-height: 25px;
-			font-size: 15px;
-			cursor: pointer;
+			flex:0 1 auto;
+			height: 30px;
+			line-height: 30px;
+			font-size:18px;
+			margin-left: 10px;
+		}
+		.icon{
+			width: 30px;
+			height: 30px;
+			display: inline-block;
+			background: url('https://avatars2.githubusercontent.com/u/17704150') center  no-repeat;
+			background-size:cover;
 		}
 		.author{
-			line-height: 25px;
-			font-size: 12px;
-			color: gray;
-			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			height: 30px;
+			float: right;
+			margin-left: 10px;
+			color:inherit;
+		}
+		.author:hover{color:pink;}
+		.date{
+			flex:0 1 auto;
+			height: 30px;
+			line-height: 30px;
+			font-size:15px;
+			margin-right: 20px;
+		}
+		.block{
+			width: 700px;
+			height: 100px;
+			margin: 5px auto;
+			box-shadow: 0 1px 3px 0 rgba(80,80,80,.11);
 			cursor: pointer;
+			background-color: #24292e;
+			color:rgba(255,255,255,0.75);
+			border-radius: 8px;
+			padding: 10px;
+			overflow: hidden;
+			position: relative;
 		}
-		.name:hover,.author:hover{
-			color:pink;
+		.block:hover{
+			opacity: 0.95;
 		}
-		.blog{
-		width:240px;
-		height:auto;
-		font-size:25px;
-		text-align:center;
-		margin:20px auto;
+		.block:hover .action{
+			top:90px;
+		}
+		.b-up{
+			height: 100px;
+		}
+		.b-img{
+			display: inline-block;
+			height: 100px;
+			width: 75px;
+			margin: 0px auto;
+			background: url("./img.png") center no-repeat;
+			background-size: cover;
+		}
+		.r-text{
+			display: inline-block;
+			height: 100px;
+			width: 600px;
+			float: right;
+			margin: 0px auto;
+		}
+		.action{
+			width: 100%;
+			height: 30px;
+			background-color:rgba(200,200,200,0.7);
+			position: absolute;
+			top:120px;
+			left:0;
+			transition: top 0.5s ease;
+			display: flex;
+			display: -webkit-flex;
+			flex-flow: row nowrap;
+			justify-content: space-around;
+		}
+		.b-title{
+			font-weight: bold;
+			font-size: 25px;
+			padding: 0px;
+			margin-top: 5px;
+			white-space:nowrap;
+			overflow: hidden;
+			text-overflow:ellipsis;
+		}
+		.b-title:hover{color:rgba(255,255,255,1);}
+		.b-time{
+			font-size:14px;
+			float: right;
+			margin-right:20px;
+			margin-top: 25px;
+		}
+		.like{
+			height: 30px;
+			flex:0 1 30px;
+			background:url("./iflike.png");
+			background-size: cover;
+		}
+		.share{
+			height: 30px;
+			flex:0 1 30px;
+			background:url("./share.png");
+			background-size: cover;
+		}
+		.share:active{
+			opacity: 0.7;
 		}
 	</style>
 </head>
 <body>
-<div class="center">
-		<div class="up">
-			<div class="img"></div>
+<header>
+	<div class="head_block">
+	<div class="name">
+		<div class="icon"></div>
+		<a href="https://github.com/Macixsq1" class="author">utahcoder的博客</a>
+	</div>
+	<p class="date">2018.2.6</p>
+	</div>
+</header>
+<iframe src="./list.json" style="display: none" id="list"></iframe>
+<div style="height: 59px"></div>
+<div class="articles">
+	
+	<div class="block">
+		<div class="b-up">
+			<div class="b-img"></div>
+			<div class="r-text">
+				<div class="b-title">adddddddddddadawa wda a adw a d aaaa</div>
+				<div class="b-time">2018/2/6</div>
+			</div>
 		</div>
-		<div class="down">
-			<div class="name">虞美人</div>
-			<a href="./public/1.html"><div class="author">不哭的小小白</div></a>
+		<div class="action">
+			<div class="like"></div>
+			<div class="share"></div>
 		</div>
+	</div>
+	<div class="block">
+		<div class="b-up">
+			<div class="b-img"></div>
+			<div class="r-text">
+				<div class="b-title">adddddddddddadawa wda a adw a d aaaa</div>
+				<div class="b-time">2018/2/6</div>
+			</div>
+		</div>
+		<div class="action">
+			<div class="like"></div>
+			<div class="share"></div>
+		</div>
+	</div>
+	<div class="block">
+		<div class="b-up">
+			<div class="b-img"></div>
+			<div class="r-text">
+				<div class="b-title">adddddddddddadawa wda a adw a d aaaa</div>
+				<div class="b-time">2018/2/6</div>
+			</div>
+		</div>
+		<div class="action">
+			<div class="like"></div>
+			<div class="share"></div>
+		</div>
+	</div>
+	 <div class="block">
+		<div class="b-up">
+			<div class="b-img"></div>
+			<div class="r-text">
+				<div class="b-title">adddddddddddadawa wda a adw a d aaaa</div>
+				<div class="b-time">2018/2/6</div>
+			</div>
+		</div>
+		<div class="action">
+			<div class="like"></div>
+			<div class="share"></div>
+		</div>
+	</div>
+	<div class="block">
+		<div class="b-up">
+			<div class="b-img"></div>
+			<div class="r-text">
+				<div class="b-title">addrrrsffsddawa wda a adw a d aaaa</div>
+				<div class="b-time">2018/2/6</div>
+			</div>
+		</div>
+		<div class="action">
+			<div class="like"></div>
+			<div class="share"></div>
+		</div>
+	</div>
+
 </div>
-<div class="blog">这是我的博客地址哦</div>
-<a href="./test.html"><div class="author">数据库测试</div></a>
+<div class=""></div>
+<div id="hypercomments_widget"></div>
+<a href="http://hypercomments.com" rel="nofollow" class="hc-link" title="comments widget">
+comments powered by Hypercomments</a>
 </body>
+<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+<script type="text/javascript">
+//ip 
+console.log(returnCitySN['cname'],returnCitySN['cip']);
+//like  can not cancle.
+var like = document.querySelectorAll(".like");
+document.body.onclick = function(e){
+	for(var i=0;i<like.length;i++){
+		if(like[i]==e.target){
+			if(like[i].style.backgroundImage="url(./iflike.png)"){
+				like[i].style.backgroundImage="url(./like.png)";
+			}
+		}
+	}
+}
+//detail
+
+//comments
+_hcwp=window._hcwp || [];
+_hcwp.push({widget:"Stream",widget_id:100984});
+(function(){if("HC_LOAD_INIT" in window)return;
+HC_LOAD_INIT = true;
+var lang = (navigator.language||navigator.systemLanguage||navigator.userLanguage||"en").
+substr(0,2).toLowerCase();
+var hcc = document.createElement("script");
+hcc.src = ("https:"==
+	document.location.protocol?"https":"http")+"://w.hypercomments.com/widget/hc/100984/"+lang+"/widget.js";
+var s = document.getElementsByTagName("script")[0];
+s.parentNode.insertBefore(hcc,s.nextSibling);
+})();
+
+
+function $(a){return document.querySelector(a);}
+window.onload = function(){
+	var text = $('#list').contentWindow.document.body.innerText;
+	var j = JSON.parse(text);
+	createBlock(j.article);
+}
+    
+    function createBlock(array){
+        array.forEach(function(obj){
+        	var block = document.createElement('div');
+    		block.className = "block";
+        	$('.articles').appendChild(block);
+
+        });
+    }
+</script>
 </html>
