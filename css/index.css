@@ -1,0 +1,267 @@
+		.head_block{
+			max-width: 900px;
+			margin: 0px auto;
+			height: 30px;
+			display: flex;
+			display: -webkit-flex;
+			flex-flow:row nowrap;
+			justify-content: space-between;
+			padding-top:12px;
+			padding-bottom:12px;
+		}
+		.name{
+			flex:0 1 auto;
+			height: 30px;
+			line-height: 30px;
+			font-size:18px;
+			margin-left: 10px;
+		}
+		.icon{
+			width: 30px;
+			height: 30px;
+			display: inline-block;
+			background: url('https://avatars2.githubusercontent.com/u/17704150') center  no-repeat;
+			background-size:cover;
+		}
+		.author{
+			display: inline-block;
+			height: 24px;
+			float: right;
+			margin-left: 10px;
+			color:inherit;
+			margin-top: 3px;
+		}
+		.author a{
+			line-height: 24px;
+			float: right;
+			text-decoration: none;
+			color:rgba(255,255,255,0.75);
+		}
+		.author a:hover{color:pink;}
+		.qzone_share:active{
+			opacity: 0.8;
+		}
+		.date{
+			flex:0 1 auto;
+			height: 30px;
+			line-height: 30px;
+			font-size:15px;
+			margin-right: 20px;
+		}
+		.block{
+			width: 700px;
+			height: 100px;
+			margin: 5px auto;
+			box-shadow: 0 1px 3px 0 rgba(80,80,80,.11);
+			cursor: pointer;
+			background-color: rgba(36,41,46,1);
+			color:rgba(255,255,255,0.75);
+			border-radius: 8px;
+			padding: 10px;
+			overflow: hidden;
+			position: relative;
+		}
+		.block:hover{
+			background-color: rgba(36,41,46,0.95);
+		}
+		.block:hover .action{
+			top:90px;
+		}
+		.b-up{
+			height: 100px;
+		}
+		.b-img{
+			display: inline-block;
+			height: 100px;
+			width: 75px;
+			margin: 0px auto;
+			background: url("./img/img.png") center no-repeat;
+			background-size: cover;
+		}
+		.r-text{
+			display: inline-block;
+			height: 100px;
+			width: 600px;
+			float: right;
+			margin: 0px auto;
+		}
+		.b-title{
+			font-weight: bold;
+			font-size: 20px;
+			padding: 0px;
+			margin-top: 5px;
+			white-space:nowrap;
+			overflow: hidden;
+			text-overflow:ellipsis;
+		}
+		.b-title:hover{color:rgba(255,255,255,1);}
+		.b-time{
+			font-size:14px;
+			float: right;
+			margin-right:20px;
+			margin-top: 15px;
+		}
+	
+		.comments{
+			width:700px;
+			margin:5px auto;
+		}
+		.myshare{
+			width: 24px;
+			height: 24px;
+			background:url(./img/share.png);
+			background-size: cover;
+			display: inline-block;
+			float: right;
+			position: relative;
+			cursor: pointer;
+		}
+		.myshare:hover .shareDiv{
+			visibility: visible; 
+			opacity: 1;
+		}
+		.shareDiv{
+			position: absolute;
+			top:0px;
+			left:25px;
+			width:80px;
+			height: 24px;
+			border-radius: 2px;
+			background-color:#fff;
+			visibility: hidden; 
+			border-radius:2px;
+			opacity: 0;
+			transition: opacity 0.6s ease;
+		}
+		.shareDiv::before{
+			content: "";
+			width:5px;height:5px;
+			position: absolute;
+			top:9.5px;left:-2.5px;
+			transform:rotateZ(-45deg);
+			-webkit-transform:rotateZ(-45deg);
+			-moz-transform:rotateZ(-45deg);
+			background-color:#fff;
+		}
+		.qzone_s{
+			width:80px;
+			height: 24px;
+			line-height: 24px;
+			text-align: center;
+			color:#24292e;
+			font-size: 8px;
+		}
+		.qzone_s:hover{
+			opacity: 0.8;
+		}
+		.b-tags{
+			margin-top:10px;
+			font-size: 12px;
+			width: auto;
+			height:20px;
+			display: flex;
+			display: -webkit-flex;
+			flex-flow: row nowrap;
+			overflow: hidden;
+			justify-content: flex-start;
+		}
+		.tag{
+			margin-left: 4px;
+			height: 20px;
+			flex:0 1 auto;
+			padding: 0 5px 0 5px;
+			border-radius: 4px;
+			background-color: pink;
+		}
+		.tag:nth-child(2n){background-color:#c65958;}
+		#comments_wrap{visibility: hidden;opacity: 0;transition: all 0.8s;}
+		.loading{
+            width: 30px;
+            height: 30px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 5px solid #BEBEBE;
+            border-left: 5px solid #498aca;
+            animation: load 1s linear infinite;
+            -moz-animation:load 1s linear infinite;
+            -webkit-animation: load 1s linear infinite;
+            -o-animation:load 1s linear infinite;
+        }
+        @-webkit-keyframes load
+        {
+            from{-webkit-transform:rotate(0deg);}
+            to{-webkit-transform:rotate(360deg);}
+        }
+        @-moz-keyframes load
+        {
+            from{-moz-transform:rotate(0deg);}
+            to{-moz-transform:rotate(360deg);}
+        }
+        @-o-keyframes load
+        {
+            from{-o-transform:rotate(0deg);}
+            to{-o-transform:rotate(360deg);}
+        }
+
+        footer{
+        	width: 700px;
+        	margin: 10px auto;
+        	height: 100px;
+        	background-color:#24292e;
+        	border-radius:5px;
+        	color:rgba(255,255,255,0.75);
+        	padding: 10px;
+        }
+        .contact{
+        	display:flex;
+        	display:-webkit-flex;
+        	width: 700px;
+        	height: 100%;
+        	justify-content:space-around;
+        	flex-flow: row nowrap;
+        }
+        .person_img{
+        	height: 60px;
+        	flex:0 1 60px;
+        	background:url(./img/utahcoder.jpg) center no-repeat;
+        	background-size: cover;
+        	margin-top:20px;
+        	border-radius:50%;
+        	transition: all 0.8s;
+        	cursor: pointer;
+        }
+        .person_img:hover{
+        	transform:rotateZ(360deg);
+        	-webkit-transform:rotateZ(360deg);
+        	-moz-transform:rotateZ(360deg);
+        	-o-transform:rotateZ(360deg);	
+        }
+        .contact_me{
+        	height: 80px;
+        	flex:0 1 480px;
+        	margin-top: 10px;
+        	box-sizing: border-box;
+        	padding:5px;
+        }
+        .contact_me a{
+        	font-weight: bold;
+        	font-size:18px;
+        	margin-bottom: 5px;
+        	text-decoration: none;
+       		color:rgba(255,255,255,0.75);
+        }
+        .contact_me a:hover{color:pink;}
+        .contact_me p{
+        	font-size:12px;
+        }
+        
+        .share2{
+        	margin-top: 10px;
+        	height: 80px;
+        	flex:0 1 80px;
+        	line-height: 80px;
+        	cursor: pointer;
+        }
+        .share2:hover{
+        	color:pink;
+        }
