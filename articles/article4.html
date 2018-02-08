@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>utahcoder的博客</title>
+	<meta charset="utf-8">
+	<link href="https://assets-cdn.github.com/assets/github-be0481bef7d9.css" media="all" rel="stylesheet">
+	<style type="text/css">
+	div{background-color:#f2f3f5;cursor: pointer;}
+	#mark{
+		padding: 50px;
+		margin: 0px auto;
+	}
+	.the-title{
+		height:30px;
+		line-height: 30px;
+		width:auto;
+		text-align: center;
+		margin:5px auto;
+		font-weight: bold;
+		font-size: 20px;
+		padding: 0px;
+		white-space:nowrap;
+		overflow: hidden;
+		text-overflow:ellipsis;
+	}
+	</style>
+</head>
+<body>
+<div class="the-title">github404背景随着鼠标移动的样式实现</div>
+<article class="markdown-body entry-content" itemprop="text" id="mark"></article>
+</body>
+<iframe src="../mds/article4.md" id="md" style="display: none"></iframe>
+<script src="../js/Parser.js"></script>
+<script type="text/javascript">
+	function $(a){return document.querySelector(a);}
+	window.onload = function(){
+	var markdownText = $('#md').contentWindow.document.body.innerText;
+	var parser = new HyperDown,
+    html = parser.makeHtml(markdownText);
+    document.querySelector("#mark").innerHTML = html;
+    }
+</script>
+</html>
