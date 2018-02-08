@@ -75,7 +75,7 @@
 			height: 100px;
 			width: 75px;
 			margin: 0px auto;
-			background: url("./img/img.png") center no-repeat;
+			background: url("../img/img.png") center no-repeat;
 			background-size: cover;
 		}
 		.r-text{
@@ -109,7 +109,7 @@
 		.myshare{
 			width: 24px;
 			height: 24px;
-			background:url(./img/share.png);
+			background:url(../img/share.png);
 			background-size: cover;
 			display: inline-block;
 			float: right;
@@ -223,7 +223,7 @@
         .person_img{
         	height: 60px;
         	flex:0 1 60px;
-        	background:url(./img/utahcoder.jpg) center no-repeat;
+        	background:url(../img/utahcoder.jpg) center no-repeat;
         	background-size: cover;
         	margin-top:20px;
         	border-radius:50%;
