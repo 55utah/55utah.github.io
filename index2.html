@@ -4,8 +4,12 @@
 	<title>utahcoder聊天室</title>
 	<style type="text/css">
 		.box{
-			width:80%;
+			width:70%;
 			margin:150px auto;
+			display: flex;
+			display: -webkit-flex;
+			justify-content: space-around;
+			flex-flow: row nowrap;
 		}
 		video{
 			box-shadow: rgba(156, 172, 172, 0.2) 0px 2px 2px, rgba(156, 172, 172, 0.2) 0px 4px 4px, rgba(156, 172, 172, 0.2) 0px 8px 8px, rgba(156, 172, 172, 0.2) 0px 16px 16px, rgba(156, 172, 172, 0.2) 0px 32px 32px, rgba(156, 172, 172, 0.2) 0px 64px 64px;
@@ -16,6 +20,17 @@
 		}
 	</style>
 <script type='text/javascript' src='https://cdn.scaledrone.com/scaledrone.min.js'></script>
+
+</head>
+<body>
+<div style="margin:10px auto;text-align: center;">
+	让你的小伙伴也打开这个地址，就可以视频了(常由于scaledrone网站无法访问失效)
+</div>
+<div class="box">
+	<video id="localVideo" autoplay muted></video>
+	<video id="remoteVideo" autoplay></video>
+</div>
+</body>
 <script type="text/javascript">
 	if(!location.hash){
 		location.hash = Math.floor(Math.random()* 0xFFFFFF).toString(16)
@@ -119,13 +134,5 @@
         sendMessage({ 'sdp': pc.localDescription });
     },onError);
 	}
-
 </script>
-</head>
-<body>
-<div class="box">
-	<video id="localVideo" autoplay muted></video>
-	<video id="remoteVideo" autoplay></video>
-</div>
-</body>
 </html>
