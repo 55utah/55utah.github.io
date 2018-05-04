@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>video</title>
+  <style type="text/css">
+    video{
+      background: rgba(255,255,255,0.5);
+    }
+    .grayscale{
+      filter: grayscale(1);
+    }
+    .sepia{
+      filter:sepia(1);
+    }
+    .blur{
+      filter: blur(3px);
+    }
+/*video标签也可以有filter特效处理！！*/
+    .box{
+      height:10px;
+      width: 1px;
+      background-color: orange;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+<video></video>
+<audio controls="controls"></audio>
+<p id="volume"></p>
+<div class="box"></div>
+<button onclick="shoot()">截图</button>
+<br>
+<button id="record">录视频</button>
+<button id="stop">stop</button>
+<br>
+<button id="record_audio">录音频</button>
+<button id="stop_audio">stop</button>
+<audio controls="controls" id="record_play"></audio>
+<br>
+变声器：
+<select id="audio_style">
+  <option value="0">无</option>
+  <option value="1">声音加粗</option>
+</select>
+<hr>
+高通滤波:<input type="range" min='20' max='15000' step='40' value='20' id="high">
+<p id='level'>0</p>
+<p>只有高于此频率的才能通过，滤掉低频率内容</p>
+<hr>
+<!-- low:<input type="range" min='2000' max='20000' step='50' id="low">
+<hr> -->
+<video id="video2" controls="controls"></video>
+</body>
+<script type="text/javascript">
+   var audio = document.querySelector('audio'); 
+   var audioctx = new (window.AudioContext || window.webkitAudioContext);
+   // var filter_low = audioctx.createBiquadFilter();
+   var filter_high = audioctx.createBiquadFilter();
+   var analyser = audioctx.createAnalyser();
+   var dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+   var media1 = navigator.mediaDevices.getUserMedia({audio:true});
+   media1.then(getdata).catch((error)=>{alert(error)});
+   function getdata(mediaStream){
+    var mic = audioctx.createMediaStreamSource(mediaStream);
+    audio.src = window.URL.createObjectURL(mediaStream);
+    mic.connect(analyser);
+    filter_high.type = 'highpass';
+    filter_high.frequency.value = 20;
+    analyser.connect(filter_high);
+    //filter_high.connect(audioctx.destination);
+    //analyser.connect(audioctx.destination);
+   }
+
+   elVolume = document.getElementById('volume');
+   var box = document.querySelector('.box');
+  function draw(){
+    var x = Math.floor(getByteFrequencyDataAverage());
+    elVolume.innerHTML = x;
+    box.style.width = 2+x*3+'px';
+  };
+  setInterval(draw,100);
+
+   function getByteFrequencyDataAverage(){
+    analyser.getByteFrequencyData(dataArray);
+    return dataArray.reduce(function(previous, current) {
+        return previous + current;
+    }) / analyser.frequencyBinCount;
+    };
+
+    // setInterval(()=>{
+    //   analyser.getByteFrequencyData(dataArray);
+    //   console.log(dataArray);
+    // },1000);
+
+    
+
+    var high = document.querySelector('#high');
+    high.onchange = function(){
+      filter_high.frequency.value = high.value;
+      // console.log(high.value);
+      document.querySelector('#level').innerText = high.value;
+    }
+
+     var record_audio = document.querySelector('#record_audio');
+    var stop_audio = document.querySelector('#stop_audio');
+    var record_play = document.querySelector('#record_play');
+    var audio_stream;
+    media1.then((stream)=>{
+      audio_stream = stream;
+    }).catch((error)=>{alert(error)});
+    record_audio.onclick = function(){
+         record_audio.disabled = 'true';
+         var mediaRecorder = new MediaRecorder(audio_stream);
+         mediaRecorder.ondataavailable = function(e) {
+           // blob_audio = new Blob([e.data], {type:e.data.type});
+           blob_audio = new Blob([e.data], {type:'audio/mp3'});
+           //可以存为mp3格式但是本地无法播放，只有网页可以播放
+        }
+         mediaRecorder.start();
+        mediaRecorder.onstop = function(){
+           record_play.src = URL.createObjectURL(blob_audio);
+           record_play.play();
+           //download(blob_audio);
+        }
+        stop_audio.onclick = function(){
+          record_audio.disabled = '';
+          mediaRecorder.stop();
+        }
+      }
+
+      //通过ScriptProcessorNode处理音频
+      //变声音  播放速度减小 声音变粗 速度增大 声音变细
+      //反应在代码就是采样点减少。。
+      var style = document.querySelector('#audio_style');
+      style.onchange = function(){
+        audio_style = parseInt(style.value);
+      }
+      var audio_style = 0;
+      var scriptNode = audioctx.createScriptProcessor(4096, 1, 1);
+      scriptNode.onaudioprocess = function(audioProcessingEvent) {
+      var inputBuffer = audioProcessingEvent.inputBuffer;
+      var outputBuffer = audioProcessingEvent.outputBuffer;
+     for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+        var inputData = inputBuffer.getChannelData(channel);
+        var outputData = outputBuffer.getChannelData(channel);
+        // Loop through the 4096 samples
+        for (var sample = 0; sample < inputBuffer.length; sample++) {
+          // outputData[sample] = inputData[sample]*1; 
+          //这里做处理即可 
+          switch(audio_style){
+            case 0:outputData[sample] = inputData[sample];break;
+            case 1:if(sample%2==0){
+                       outputData[sample] = inputData[sample/2];}
+                   else{
+                       outputData[sample] = inputData[(sample-1)/2];
+                    };break;
+          }
+        }
+      }
+    }
+    filter_high.connect(scriptNode);
+    scriptNode.connect(audioctx.destination);
+
+</script>
+<script type="text/javascript">
+  var count = 0;
+  var video = document.querySelector('video');
+  // var option = {audio:false,video:true};
+   var option = {audio:false,video:{width:640,height:480}};
+  var media = navigator.mediaDevices.getUserMedia(option);
+  media.then(show).catch((error)=>{console.log(error)});
+  function show(mediaStream){
+  	video.src = window.URL.createObjectURL(mediaStream);
+  	video.onloadedmetadata = function(e) {
+  		video.play();
+  };
+    video.onclick = ()=>{
+      count++;
+      switch(count){
+        case 1:video.className = 'grayscale';break;
+        case 2:video.className = 'sepia';break;
+        case 3:video.className = 'blur';break;
+        case 4:video.className = '';count=0;break;
+      }
+    }
+  }
+
+  function shoot(){
+      var canvas = document.createElement('canvas');
+      //console.log(video.width); return  0 ;
+      canvas.width = 640;
+      canvas.height = 480;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(video,0,0);
+      canvas.toBlob((myblob)=>{
+        download(myblob);
+      });
+  }
+  function download(blob){
+     var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = Math.random().toString(36).substr(2,14);
+        a.click();
+  }
+
+  var record = document.querySelector('#record');
+  var stop_record = document.querySelector('#stop');
+  var video2 = document.querySelector('#video2');
+  var video_stream;
+      media.then((stream)=>{
+        video_stream = stream;
+      }).catch((error)=>{alert(error)});
+      record.onclick = function(){
+         record.disabled = 'true';
+         var mediaRecorder = new MediaRecorder(video_stream);
+         mediaRecorder.ondataavailable = function(e) {
+            myblob = new Blob([e.data], {type:e.data.type});
+        }
+         mediaRecorder.start();
+        mediaRecorder.onstop = function(){
+          //download(myblob);
+          //播放器不能播放webm格式视频，只能网页播放
+          //可能需要使用库转码
+           video2.src = URL.createObjectURL(myblob);
+           video2.play();
+        }
+        stop_record.onclick = function(){
+          record.disabled = '';
+          mediaRecorder.stop();
+        }
+      }
+
+   
+
+  // 1.想要截图可以使用canvas的drawImage方法然后服务端可以保存图片的
+  //void canvas.toBlob(callback, type, encoderOptions);
+//callback
+// 回调函数，可获得一个单独的Blob对象参数。
+// type 可选
+// DOMString类型，指定图片格式，默认格式为image/png。
+// encoderOptions 可选
+// Number类型，值在0与1之间，当请求图片格式为image/jpeg或者image/webp时用来指定图片展示质量。如果这个参数的值不在指定类型与范围之内，则使用默认值，其余参数将被忽略。
+
+  // 2.利用canvas的getImageData可以做成字符播放
+
+
+  // 	var canvas = document.querySelector('canvas');
+  // 	var ctx = canvas.getContext('2d');
+  // 	setInterval(function(){
+  // 		ctx.drawImage(video,0,0,640,480);
+  // 		var imgdata = ctx.getImageData(0,0,640,480);
+  // 		//反相处理
+  // 		for(var i = 0; i < imgdata.height; ++i){
+  //     for(var j = 0; j < imgdata.width; ++j){
+  //       var x = i*4*imgdata.width + 4*j, 
+  //        //每个像素需要占用4位数据，分别是r,g,b,alpha透明通道
+  //       r = imgdata.data[x],
+  //       g = imgdata.data[x+1],
+  //       b = imgdata.data[x+2];
+  //       imgdata.data[x+3] = 150; 
+  //       //图片反相：
+  //       imgdata.data[x] = 255-r;
+  //       imgdata.data[x+1] = 255-g;
+  //       imgdata.data[x+2] = 255-b; 
+  //     }
+  //   }
+  // 		ctx.putImageData(imgdata,0,0);
+  // 	},100);
+  // }
+</script>
+</html>
