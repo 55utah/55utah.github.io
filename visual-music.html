@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>visual-music</title>
+	<style type="text/css">
+		html,body{margin: 0;padding: 0;background-color: #24292e;color:#fff;}
+		.file{width: 150px;height: 60px;margin: 20px auto 20px auto}
+		#canvas{
+			display: block;
+			margin: 10px auto;
+		}
+	</style>
+</head>
+<body>
+<div class="file">
+	<p>选择音频文件</p>
+	<input onchange="load(this.files[0])" type="file" id="music">
+</div>
+<canvas id="canvas" width="800px" height="350px"></canvas>
+</body>
+<script type="text/javascript">
+var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext
+var audioContext = new AudioContext()
+if(!audioContext){alert('您的浏览器不支持核心api')}
+function load(file){
+	if(file){
+		var fr = new FileReader()
+		fr.readAsArrayBuffer(file)
+		fr.onload = e => {
+			var result = e.target.result
+			audioContext.decodeAudioData(result, function(buffer){
+				visual(buffer)
+			},e => alert(e))
+		}
+	}
+}
+function visual(buffer){
+	//connnect
+	var audioBufferSouceNode = audioContext.createBufferSource()
+	var analyser = audioContext.createAnalyser()
+	audioBufferSouceNode.connect(analyser)
+	analyser.connect(audioContext.destination)
+	audioBufferSouceNode.buffer = buffer
+	audioBufferSouceNode.start(0)
+	//绘制
+	draw(analyser)
+}
+function draw(analyser){
+	var canvas = document.querySelector('#canvas')
+    meterNum = 400 / (8 + 2),  //计算当前画布上能画多少条
+    ctx = canvas.getContext('2d'),
+    cwidth = canvas.width,
+    cheight = canvas.height - 2;
+
+    gradient = ctx.createLinearGradient(0, 0, 0, 340)
+	gradient.addColorStop(1, '#0f0')
+	gradient.addColorStop(0.5, '#ff0')
+	gradient.addColorStop(0, '#f00')
+	ctx.fillStyle = gradient
+	var drawLine = function(){
+		var array = new Uint8Array(analyser.frequencyBinCount)
+		analyser.getByteFrequencyData(array)
+		var step = Math.round(array.length / meterNum)
+		ctx.clearRect(0, 0, cwidth, cheight)
+		for (var i = 0; i < meterNum; i++) {
+			ctx.fillStyle = gradient
+			ctx.fillRect(400 - i*12, cheight - array[i*step], 10, array[i*step])
+			ctx.fillRect(400 + i*12, cheight - array[i*step], 10, array[i*step])	
+			ctx.fillStyle = "#fff"
+			ctx.fillRect(400 - i*12, cheight, 10, 2)
+			ctx.fillRect(400 + i*12, cheight, 10, 2)
+		}
+		requestAnimationFrame(drawLine)
+	}
+	requestAnimationFrame(drawLine)
+}
+
+</script>
+</html>
