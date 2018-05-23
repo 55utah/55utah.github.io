@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>pdf在线处理小工具</title>
+</head>
+<body>
+<p>功能：</p>
+<select id="select" onchange="change()">
+	<option selected value="0">预览pdf</option>
+	<option value="1">合并pdf</option>
+	<option value="2">拆分pdf</option>
+</select>
+
+<div id="showpdf">
+<p>提示:大部分浏览器已默认支持pdf查看,本页面用于基础预览，不能做任何操作</p>
+<p>清除上一次预览文件，请刷新本页面</p>
+<p id="p1">查看 PDF 文件</p>
+<p id="errmsg" style="color:red;"></p>   
+<input type="file" id="inputfile1" accept=".pdf" onchange="onChangeFile(event)"><br>
+</div>
+
+<div id="combine" style="display: none">
+<p id="p1">No1 PDF File</p>
+<input type="file" id="inputfile1" accept="application/pdf" onchange="onChangeFile(event,0)"><br>
+<p id="p2">No2 PDF File</p>
+<input type="file" id="inputfile2" accept="application/pdf" onchange="onChangeFile(event,1)"><br>
+<p id="errmsg" style="color:red;"></p>   
+<button id="run" style="width:200px;height:30px;" onclick="run();">开始合并</button>
+</div>
+
+<div id="split" style="display: none">
+<p>提示:提取起始页到终止页的部分生成pdf</p>
+<p id="p2">PDF File</p>
+<input type="file" id="inputfile2" accept="application/pdf" onchange="onChangeFile(event)">
+<br>
+起始页:<input id="in1" type="number" value="1">
+终止页:<input id="in2" type="number" value="1">
+<p id="errmsg" style="color:red;"></p>   
+<button id="run" style="width:200px;height:30px;" onclick="run2();">开始生成</button>
+</div>
+
+</body>
+
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script type="text/javascript" src="./pdf-designer.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.489/pdf.js"></script>
+<script type="text/javascript">
+
+var Analysts = new Array();    
+var Analyst = null;    
+var type = 1;
+
+function onChangeFile(event,_index) {
+    var reader = new FileReader();
+    var file = event.target.files;
+    reader.onload = function (event) {
+	var pdfData = new Uint8Array(reader.result);
+	//combine
+	if(type==2){
+	Analysts[_index] = new TPDFAnalyst();
+	Analysts[_index].LoadFromStream(pdfData);
+	}
+	//split
+	if(type==3){
+	Analyst = new TPDFAnalyst();
+	Analyst.LoadFromStream(pdfData);
+	}
+	if(type == 1){
+	// The workerSrc property shall be specified.
+	pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.489/pdf.worker.js';
+	var loadingTask = pdfjsLib.getDocument({data: pdfData});
+	loadingTask.then(function(pdf) {
+  	console.log('PDF loaded');
+  	// Fetch the first page
+  	var nums = pdf.numPages 
+  	// var p =  new Array(nums);
+  	for(i=1;i<=nums;i++){
+  	pdf.getPage(i).then(function(page) {
+    console.log('Page loaded');
+    
+    var scale = 1;
+    var viewport = page.getViewport(scale);
+
+    // Prepare canvas using PDF page dimensions
+    var canvas = document.createElement('canvas');
+    $('#showpdf').appendChild(canvas)
+    var context = canvas.getContext('2d');
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    // Render PDF page into canvas context
+    var renderContext = {
+      canvasContext: context,
+      viewport: viewport
+    };
+    var renderTask = page.render(renderContext);
+    renderTask.then(function () {
+      console.log('Page rendered');
+    });
+  });
+}
+}, function (reason) {
+  // PDF loading error
+  console.error(reason);
+});
+}
+	}
+reader.readAsArrayBuffer(file[0]);
+}
+
+
+function run() {        
+    var PDFCombine = new TPDFCombine();
+    if (Analysts[0] != null && Analysts[1] != null) {
+        try {
+             PDFCombine.SaveToFile(PDF_GetDateTime_Now() + '.pdf', Analysts);
+        } catch (e) {
+            Analysts[0] = null;
+            Analysts[1] = null;
+             document.getElementById("errmsg").innerHTML =
+          'Two PDF files, please select.';
+        }
+    } else {
+        document.getElementById("errmsg").innerHTML =
+          'Two PDF files, please select.';
+    }
+}
+
+function run2(){
+	let begin = $('#in1').value
+	let end = $('#in2').value
+	if(begin<=end&&begin>=1&&end>=1){
+	 var PDFKnife = new TPDFKnife();
+	
+    if (Analyst != null) {
+        try {
+            PDFKnife.SaveToFile(PDF_GetDateTime_Now() + '.pdf', Analyst,begin,end);
+        } catch (e) {
+            document.getElementById("errmsg").innerHTML = 
+              'failed in the convert of the PDF file. ';
+        }
+    } else {
+        document.getElementById("errmsg").innerHTML =
+          'Please select a file.';
+    }
+	}else{
+		alert("页码错误，请输入最小为1的起始页和终止页！")
+	}
+}
+
+function $(s){
+	return document.querySelector(s)
+}
+
+(function(){
+	$('#showpdf').style.display = "block"
+	$('#combine').style.display = "none"
+	$('#split').style.display = "none"
+})()
+
+function change(){
+	if($('#select').value === "0"){
+		type = 1
+		$('#showpdf').style.display = "block"
+		$('#combine').style.display = "none"
+		$('#split').style.display = "none"
+	}else if($('#select').value === "1"){
+		type = 2
+		$('#showpdf').style.display = "none"
+		$('#combine').style.display = "block"
+		$('#split').style.display = "none"
+	}else if($('#select').value === "2"){
+		type = 3
+		$('#showpdf').style.display = "none"
+		$('#combine').style.display = "none"
+		$('#split').style.display = "block"
+	}
+}
+</script>
+</html>
