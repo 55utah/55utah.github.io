@@ -17,3 +17,5 @@ https://macixsq1.github.io/visual-music.html
 https://macixsq1.github.io/pdf-designer.html
 pdf在线处理工具
 
+https://macixsq1.github.io/mine-bomb.html
+扫雷小游戏
