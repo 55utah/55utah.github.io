@@ -2,44 +2,58 @@
 <html>
 <head>
 	<title>mine</title>
-	<link rel="stylesheet" type="text/css" href="./css/bomb-style.css">
+	<link rel="stylesheet" type="text/css" href="./bomb-style.css">
 </head>
 <body>
 <div id="app">
-	<div class="score">score:{{score}} bombs:60/400</div>
+	<button class="btn" @click="window.location.reload()">重新开始</button>
+	<div class="score">score:{{score}} bombs:40/400</div>
 	<div id="box">
-		<div class="line" v-for="(line,index1) in lines">
-			<div class="block" v-for="(block,index2) in line" :key="random()" :style="{backgroundColor:clickArray[index1][index2] === ''?'#518ed2':'#bb4e0c'}" @click="changeBgc(index1,index2)">{{clickArray[index1][index2] | textFilter}}</div>
+		<div class="line" v-for="(line,rowIndex) in lines" :key="rowIndex">
+			<div class="block" v-for="(cell,colIndex) in line" :key="rowIndex+','+colIndex" :style="{backgroundColor:cell.status === 0?'#bb4e0c':'#518ed2'}" @click.left = "turn(rowIndex, colIndex)" @click.right = "flag(rowIndex, colIndex)">{{cell | textFilter}}</div>
 		</div>
 	</div>
 </div>
 </body>
-<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
 <script type="text/javascript">
 let vm = new Vue({
 	el:"#app",
 	data:{
 		width:20,
 		lines:[],
-		CONST_NULL:0,
-		CONST_BOMB:9,
-		bomb_num:3,
-		clickArray:undefined,
-		score:0
+		bomb_num:40,
+		score:0,
+		//left right click
+		Left:true,
+		Right:false,
+		//four status
+		FRONT:0,//翻开 
+		BACK:1,//未翻开
+		FLAG:2,//插旗
+		//NOT_SURE:3,//未定
+		//cell around
+		AROUND:[
+		[-1,-1],
+		[-1,0],
+		[-1,1],
+		[0,-1],
+		[0,1],
+		[1,-1],
+		[1,0],
+		[1,1]
+		]
 	},
 	methods:{
-		random(){
-			return Math.random().toString(16)
-		},
 		run(){
 			this.init()
 			
 			let array = this.lines.reduce((p,k)=>{
-				p.push(...k)
+				p.push(...k.map(i => i.value))
 				return p
 			},[])
 			
-			for(let i=0;i<this.width*this.bomb_num;i++){
+			for(let i=0;i<this.bomb_num;i++){
 				array[i] = 9
 			}
 			let count = this.width**2
@@ -48,81 +62,99 @@ let vm = new Vue({
 				pindex = Math.floor(Math.random()*count--);
 				[ array[pindex],array[count] ] = [ array[count],array[pindex] ]
 			}
-			
-			this.lines = null 
-			this.lines = []
-			for(let j=0;j<this.width;j++){
-				this.lines[j] = []
-				for(let i=0;i<this.width;i++){
-					this.lines[j][i] = array[j*this.width+i]
-				}
-			}
-			
-			for(let j=0;j<this.width;j++){
-				for(let i=0;i<this.width;i++){
-					if(this.lines[j][i]==9){
-					if(this.lines[j-1]){
-						if(this.lines[j-1][i-1]<9){this.lines[j-1][i-1]++}
-						if(this.lines[j-1][i]<9){this.lines[j-1][i]++}
-						if(this.lines[j-1][i+1]<9){this.lines[j-1][i+1]++}
-					}
-					if(this.lines[j+1]){
-						if(this.lines[j+1][i-1]<9){this.lines[j+1][i-1]++}
-						if(this.lines[j+1][i]<9){this.lines[j+1][i]++}
-						if(this.lines[j+1][i+1]<9){this.lines[j+1][i+1]++}
-					}
-					if(this.lines[j][i-1]!==undefined){
-						if(this.lines[j][i-1]<9){this.lines[j][i-1]++}
-					}
-					if(this.lines[j][i+1]!==undefined){
-						if(this.lines[j][i+1]<9){this.lines[j][i+1]++}
-					}
-					}
-				}
-			}
 
+			for(let j=0;j<this.width;j++){
+				for(let i=0;i<this.width;i++){
+					this.lines[j][i].value = array[j*this.width+i]
+				}
+			}
+			
+			for(let j=0;j<this.width;j++){
+				for(let i=0;i<this.width;i++){
+					if(this.lines[j][i].value==9){
+						this.AROUND.forEach(offset => {
+							let row = j + offset[0]
+							let col = i + offset[1]
+							if(this.lines[row]&&
+							   this.lines[row][col]!==undefined&&
+							   this.lines[row][col].value!=9
+							){
+							   this.lines[row][col].value++	
+							}
+						})
+					}
+				}
+			}
 		},
 		init(){
 			this.score = 0
+			let value = 0, status = this.BACK
 			this.lines = new Array(this.width)
-			for(let j=0;j<this.lines.length;j++){
-				this.lines[j] = Array(this.width).fill(0)
-			}
-			this.clickArray =  new Array(this.width)
-			for(let k=0;k<this.clickArray.length;k++){
-				this.clickArray[k] = Array(this.width).fill('')
+			for(let j=0;j<this.width;j++){
+				this.lines[j] = new Array(this.width)
+				for(let k=0;k<this.width;k++){
+					this.lines[j][k] = {value, status, rowIndex:j, colIndex:k}
+				}
 			}
 		},
-		changeBgc(index1,index2){
-			let r = this.clickArray[index1][index2]
-			let p = JSON.parse(JSON.stringify(this.clickArray[index1]))
-			p[index2] = this.lines[index1][index2]
-			//强制视图更新
-			Vue.set(this.clickArray,index1,p)
-			let result = p[index2]
-			if(result == 9){
-				let d = confirm('游戏结束')
-				this.showAll()
-			}else if(r === ''){
+		turn(rowIndex, colIndex){
+			let cell = this.lines[rowIndex][colIndex]
+			if(cell.status == this.BACK){
 				this.score++
+				cell.status = this.FRONT
+				if(cell.value == 9){
+					this.showAll()
+					setTimeout(alert('游戏结束'),500)
+				}else if(cell.value == 0){
+					this.bloom(cell)
+				}
 			}
+		},
+		flag(rowIndex, colIndex){
+			let cell = this.lines[rowIndex][colIndex]
+			if(cell.status == this.BACK){
+				cell.status = this.FLAG
+			}else if(cell.status == this.FLAG){
+				cell.status = this.BACK
+			}
+		},
+		bloom(cell){
+			if(cell.value!==0) return
+			this.AROUND.forEach(offset => {
+				const row = cell.rowIndex + offset[0]
+				const col = cell.colIndex + offset[1]
+				if(this.lines[row]&&
+				   this.lines[row][col]!==undefined&&
+				   this.lines[row][col].status === this.BACK
+				){
+				   this.lines[row][col].status = this.FRONT
+				   this.score++
+				   this.bloom(this.lines[row][col])
+				}
+			})
 		},
 		showAll(){
 			for(let k=0;k<this.width;k++){
 				for(let j=0;j<this.width;j++){
-					this.clickArray[k][j] = this.lines[k][j]
+					this.lines[k][j].status = this.FRONT
 				}
 			}
-		}
+		},
+		
 	},
-	created(){
+	mounted(){
 		this.run()
+		document.oncontextmenu = () => false
+		this.window = window
 	},
 	filters:{
 		textFilter:function(val){
-			return val==0?'':val==9?'\u{1F4A3}':val
+			if(val.status==vm.FLAG){return '\u{1F3C1}'}
+			if(val.status==vm.BACK){return ''}
+			return val.value==0?'':val.value==9?'\u{1F4A3}':val.value
 		}
 	}
 })
+window.vm = vm
 </script>
 </html>
