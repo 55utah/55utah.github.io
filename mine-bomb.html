@@ -6,11 +6,15 @@
 </head>
 <body>
 <div id="app">
-	<button class="btn" @click="window.location.reload()">重新开始</button>
-	<div class="score">score:{{score}} bombs:40/400</div>
+	<div class="flag btn" @click="window.location.reload()">重新开始</div>
+	<div class="score">score:{{score}}  flags:{{flag_num}}/{{bomb_num}}  bombs:40/400</div>
+	<div class="flag_func">
+		<div class="flag flag_off" :style="{backgroundColor:flag_func?'#CDCDB4':'#518ed2'}" @click="flag_func=false">翻格子</div>
+		<div class="flag flag_on" :style="{backgroundColor:flag_func?'#518ed2':'#CDCDB4'}" @click="flag_func=true">插旗子</div>
+	</div>
 	<div id="box">
 		<div class="line" v-for="(line,rowIndex) in lines" :key="rowIndex">
-			<div class="block" v-for="(cell,colIndex) in line" :key="rowIndex+','+colIndex" :style="{backgroundColor:cell.status === 0?'#bb4e0c':'#518ed2'}" @click.left = "turn(rowIndex, colIndex)" @click.right = "flag(rowIndex, colIndex)">{{cell | textFilter}}</div>
+			<div class="block" v-for="(cell,colIndex) in line" :key="rowIndex+','+colIndex" :style="{backgroundColor:cell.status === 0?'#bb4e0c':'#518ed2'}" @click.left = "turn(rowIndex, colIndex)">{{cell | textFilter}}</div>
 		</div>
 	</div>
 </div>
@@ -24,14 +28,11 @@ let vm = new Vue({
 		lines:[],
 		bomb_num:40,
 		score:0,
-		//left right click
-		Left:true,
-		Right:false,
+		flag_num:0,
 		//four status
 		FRONT:0,//翻开 
 		BACK:1,//未翻开
 		FLAG:2,//插旗
-		//NOT_SURE:3,//未定
 		//cell around
 		AROUND:[
 		[-1,-1],
@@ -42,7 +43,9 @@ let vm = new Vue({
 		[1,-1],
 		[1,0],
 		[1,1]
-		]
+		],
+		//是否插旗状态
+		flag_func:false
 	},
 	methods:{
 		run(){
@@ -98,6 +101,7 @@ let vm = new Vue({
 			}
 		},
 		turn(rowIndex, colIndex){
+			if(!this.flag_func){
 			let cell = this.lines[rowIndex][colIndex]
 			if(cell.status == this.BACK){
 				this.score++
@@ -109,13 +113,30 @@ let vm = new Vue({
 					this.bloom(cell)
 				}
 			}
+			}else{
+				this.flag(rowIndex, colIndex)
+			}
 		},
 		flag(rowIndex, colIndex){
 			let cell = this.lines[rowIndex][colIndex]
 			if(cell.status == this.BACK){
+				if(this.flag_num==this.bomb_num){
+					alert('旗子已用完')
+					return
+				}
 				cell.status = this.FLAG
+				this.flag_num++
+				if(this.flag_num==this.bomb_num){
+					if(this.judge_win()){
+						alert('你赢了!!已标记全部地雷')
+					}else{
+						alert('挑战失败，有地雷未标出')
+					}
+					this.showAll()
+				}
 			}else if(cell.status == this.FLAG){
 				cell.status = this.BACK
+				this.flag_num--
 			}
 		},
 		bloom(cell){
@@ -140,7 +161,17 @@ let vm = new Vue({
 				}
 			}
 		},
-		
+		judge_win(){
+			for(let k=0;k<this.width;k++){
+				for(let j=0;j<this.width;j++){
+					let item = this.lines[k][j]
+					if(item.status == this.FLAG && item.value != 9){
+						return false
+					}
+				}
+			}
+			return true
+		}
 	},
 	mounted(){
 		this.run()
@@ -149,9 +180,9 @@ let vm = new Vue({
 	},
 	filters:{
 		textFilter:function(val){
-			if(val.status==vm.FLAG){return '\u{1F3C1}'}
-			if(val.status==vm.BACK){return ''}
-			return val.value==0?'':val.value==9?'\u{1F4A3}':val.value
+			if(val.status==2){return '\u{1F3C1}'}
+			else if(val.status==1){return ''}
+			else{return val.value==0?'':val.value==9?'\u{1F4A3}':val.value}
 		}
 	}
 })
