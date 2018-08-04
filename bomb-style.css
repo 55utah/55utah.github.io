@@ -42,12 +42,28 @@ body, #app{
 	opacity: .8;
 }
 .score{
-	width: 100px;
+	width: 400px;
 	height: 20px;
 	margin: 10px auto;
 	text-align: center;
 }
 .btn{
-	display: block;
-	margin: 10px auto;
+	display: block !important;
+	margin: 5px auto;
+	background-color: #518ed2;
+}
+.flag_func{
+	margin: 5px auto;
+	width: 350px;
+}
+.flag{
+	display: inline-block;
+	width: 150px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	cursor: pointer;
+}
+.flag_on{
+	margin-left: 20px;
 }
