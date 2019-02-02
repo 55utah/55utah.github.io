@@ -96,8 +96,8 @@
         </div>
         <input ref='input' class="hide" @change="loadImage()" type="file" accept="image/png,image/jpg,image/jpeg" id="inputBtn">
         <canvas ref="canvas" id="canvas" width="100" height="100"></canvas>
-        <a ref="a" class="hide" href="">.</a>
         <img id="downMode" class="hide" :src="src">
+        <a class="hide" ref="a" href="">.</a>
         <div class="controlBox">
             <div class="filters">
                 <div class="filter" v-for="item in filterArr" :style="{backgroundImage: imgSrc, filter: item.filter}" @click="selectFilter(item.name, item.filter)"></div>
@@ -351,16 +351,14 @@ window.filterArr = arr
                     this.imgFilter = filter
                 },
                 download(){
-                    let imgMode = document.querySelector('#downMode')
-                    if(imgMode.naturalWidth === undefined){
-                        alert('你的浏览器不支持此功能，请更换浏览器.')
+                    let ua = navigator.userAgent.toLowerCase()
+                    if(ua.indexOf('micromessenger') != -1){
+                        alert('微信浏览器无法下载图片，请在其他浏览器中打开下载.')
                         return
                     }
-                    alert(imgMode)
+                    let imgMode = document.querySelector('#downMode')
                     let width = imgMode.naturalWidth, height = imgMode.naturalHeight
-                    alert(width)
                     let c = this.$refs.canvas
-                    alert(c)
                     c.width = width
                     c.height = height
                     let ctx = c.getContext('2d')
@@ -370,24 +368,28 @@ window.filterArr = arr
                         alert('你的浏览器不支持此功能，请更换浏览器.')
                         return
                     }
-                    alert(ctx)
                     ctx.filter = this.imgFilter
                     ctx.drawImage(img, 0, 0)
                     let link = this.$refs.a
-                    alert(link)
                     let imgName = this.filterName + '-' + this.imgName
                     c.toBlob(function(blob){
-                        alert('toblob')
                         let url = URL.createObjectURL(blob)
-                        link.href = url
-                        link.download = imgName
-                        link.click()
+                        if(link.download !== undefined){
+                            link.href = url
+                            link.download = imgName
+                            link.click()
+                        }else{
+                            window.open(url, '_self')
+                        }
                         URL.revokeObjectURL(url)
                     }, this.imgType)
                 }
             },
             mounted(){
                 this.filterArr = window.filterArr
+                if(window.innerWidth > 1000){
+                    alert('建议使用手机或平板访问.')
+                }
             }
         })
 
