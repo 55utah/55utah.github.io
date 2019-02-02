@@ -379,7 +379,7 @@ window.filterArr = arr
                     c.toBlob(function(blob){
                         alert('toblob')
                         let url = URL.createObjectURL(blob)
-                        link.href = url
+                        link.href = url + '?mp.wexin.qq.com'
                         link.download = imgName
                         link.click()
                         URL.revokeObjectURL(url)
