@@ -22,3 +22,6 @@ https://macixsq1.github.io/mine-bomb.html
 
 https://macixsq1.github.io/happy-birthday.html
 生日快乐呀~
+
+https://macixsq1.github.io/filterImage.html
+图片滤镜
