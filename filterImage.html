@@ -376,6 +376,8 @@ window.filterArr = arr
                     let imgType = this.imgType
                     c.toBlob(function(blob){
                         alert(blob)
+                        alert(blob.size)
+                        alert(blob.type)
                         let url = URL.createObjectURL(blob)
                         alert(url)
                         // if(link.download !== undefined){
