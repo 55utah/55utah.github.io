@@ -374,13 +374,13 @@ window.filterArr = arr
                     let imgName = this.filterName + '-' + this.imgName
                     c.toBlob(function(blob){
                         let url = URL.createObjectURL(blob)
-                        if(link.download !== undefined){
-                            link.href = url
-                            link.download = imgName
-                            link.click()
-                        }else{
+//                         if(link.download !== undefined){
+//                             link.href = url
+//                             link.download = imgName
+//                             link.click()
+//                         }else{
                             window.open(url, '_self')
-                        }
+//                         }
                         URL.revokeObjectURL(url)
                     }, this.imgType)
                 }
