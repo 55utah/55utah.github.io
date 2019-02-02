@@ -377,7 +377,7 @@ window.filterArr = arr
                     c.toBlob(function(blob){
                         // alert(blob)
                         // let url = URL.createObjectURL(blob)
-                        let url = URL.createObjectURL(c.toDataURL(imgType))
+                        let url = c.toDataURL(imgType)
                         alert(url)
                         if(link.download !== undefined){
                             link.href = url
