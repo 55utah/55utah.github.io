@@ -374,13 +374,13 @@ window.filterArr = arr
                     let imgName = this.filterName + '-' + this.imgName
                     c.toBlob(function(blob){
                         let url = URL.createObjectURL(blob)
-//                         if(link.download !== undefined){
-//                             link.href = url
-//                             link.download = imgName
-//                             link.click()
-//                         }else{
-                            window.open(url, '_self')
-//                         }
+                        if(link.download !== undefined){
+                            link.href = url
+                            link.download = imgName
+                            link.click()
+                        }else{
+                            alert('你的浏览器不支持此功能，请更换浏览器.')
+                        }
                         URL.revokeObjectURL(url)
                     }, this.imgType)
                 }
@@ -389,6 +389,22 @@ window.filterArr = arr
                 this.filterArr = window.filterArr
                 if(window.innerWidth > 1000){
                     alert('建议使用手机或平板访问.')
+                }
+                // polyfill canvas.toBlob
+                if (!HTMLCanvasElement.prototype.toBlob) {
+                    Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+                        value: function (callback, type, quality) {
+                        var canvas = this
+                        setTimeout(function() {
+                            var binStr = atob(canvas.toDataURL(type, quality).split(',')[1])
+                            var len = binStr.length, arr = new Uint8Array(len)
+                            for (var i = 0; i < len; i++ ) {
+                                arr[i] = binStr.charCodeAt(i)
+                            }
+                        callback(new Blob([arr], {type: type || 'image/png'}))
+                        })
+                    }
+                    })
                 }
             }
         })
