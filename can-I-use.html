@@ -15,14 +15,7 @@
         function test(){
             var s = $('#input')
             var v = s.value
-            var arr = v.split(',')
-            if(arr.length!=2){
-                alert('input error.')
-                return
-            }
-            var ele = arr[0].trim()
-            var fn = arr[1].trim()
-            eval('alert('+ele+'.'+fn+')')
+            eval('alert('+v+')')
         }
     </script>
 </html>
