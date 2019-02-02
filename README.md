@@ -25,3 +25,6 @@ https://macixsq1.github.io/happy-birthday.html
 
 https://macixsq1.github.io/filterImage.html
 图片滤镜
+
+https://macixsq1.github.io/can-I-use.html
+浏览器兼容性测试
