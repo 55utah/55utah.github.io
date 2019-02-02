@@ -110,6 +110,7 @@
         </div>
     </body>
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+    <script src="./js/download.js"></script>
     <script>
         const filters = {
 'filter-1977':{
@@ -372,15 +373,19 @@ window.filterArr = arr
                     ctx.drawImage(img, 0, 0)
                     let link = this.$refs.a
                     let imgName = this.filterName + '-' + this.imgName
+                    let imgType = this.imgType
                     c.toBlob(function(blob){
+                        alert(blob)
                         let url = URL.createObjectURL(blob)
-                        if(link.download !== undefined){
-                            link.href = url
-                            link.download = imgName
-                            link.click()
-                        }else{
-                            alert('你的浏览器不支持此功能，请更换浏览器.')
-                        }
+                        alert(url)
+                        // if(link.download !== undefined){
+                        //     link.href = url
+                        //     link.download = imgName
+                        //     link.click()
+                        // }else{
+                        //     alert('你的浏览器不支持此功能，请更换浏览器.')
+                        // }
+                        download(blob, imgName, imgType)
                         URL.revokeObjectURL(url)
                     }, this.imgType)
                 }
