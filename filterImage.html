@@ -341,10 +341,6 @@ window.filterArr = arr
                     let input = this.$refs.input
                     f = input.files[0]
                     this.imgType = f.type
-//                     
-                    alert(URL)
-                    alert(URL.createObjectURL)
-//                     
                     url = URL.createObjectURL(f)
                     this.src = url
                     this.imgName = f.name
@@ -360,8 +356,11 @@ window.filterArr = arr
                         alert('你的浏览器不支持此功能，请更换浏览器.')
                         return
                     }
+                    alert(imgMode)
                     let width = imgMode.naturalWidth, height = imgMode.naturalHeight
+                    alert(width)
                     let c = this.$refs.canvas
+                    alert(c)
                     c.width = width
                     c.height = height
                     let ctx = c.getContext('2d')
@@ -371,11 +370,14 @@ window.filterArr = arr
                         alert('你的浏览器不支持此功能，请更换浏览器.')
                         return
                     }
+                    alert(ctx)
                     ctx.filter = this.imgFilter
                     ctx.drawImage(img, 0, 0)
                     let link = this.$refs.a
+                    alert(link)
                     let imgName = this.filterName + '-' + this.imgName
                     c.toBlob(function(blob){
+                        alert('toblob')
                         let url = URL.createObjectURL(blob)
                         link.href = url
                         link.download = imgName
