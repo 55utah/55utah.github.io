@@ -110,7 +110,7 @@
         </div>
     </body>
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
-    <script src="./js/download.js"></script>
+    <script src="./download.js"></script>
     <script>
         const filters = {
 'filter-1977':{
@@ -375,20 +375,18 @@ window.filterArr = arr
                     let imgName = this.filterName + '-' + this.imgName
                     let imgType = this.imgType
                     c.toBlob(function(blob){
-                        alert(blob)
-                        alert(blob.size)
-                        alert(blob.type)
-                        let url = URL.createObjectURL(blob)
+                        // alert(blob)
+                        // let url = URL.createObjectURL(blob)
+                        let url = URL.createObjectURL(c.toDataURL(imgType))
                         alert(url)
-                        // if(link.download !== undefined){
-                        //     link.href = url
-                        //     link.download = imgName
-                        //     link.click()
-                        // }else{
-                        //     alert('你的浏览器不支持此功能，请更换浏览器.')
-                        // }
-//                         download(blob, imgName, imgType)
-                        window.open(url, '_self')
+                        if(link.download !== undefined){
+                            link.href = url
+                            link.download = imgName
+                            link.click()
+                        }else{
+                            alert('你的浏览器不支持此功能，请更换浏览器.')
+                        }
+                        // download(blob, imgName, imgType)
                         URL.revokeObjectURL(url)
                     }, this.imgType)
                 }
@@ -397,6 +395,9 @@ window.filterArr = arr
                 this.filterArr = window.filterArr
                 if(window.innerWidth > 1000){
                     alert('建议使用手机或平板访问.')
+                }
+                if(window.navigator.msSaveOrOpenBlob){
+                    alert('msSaveOrOpenBlob')
                 }
                 // polyfill canvas.toBlob
                 if (!HTMLCanvasElement.prototype.toBlob) {
