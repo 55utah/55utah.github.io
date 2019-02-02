@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>兼容性测试</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, minimum-scale=1, user-scalable=no">    
+    </head>
+    <body>
+        <input id="input" type="text" style="width:90%;display: block;margin: 10px auto;">
+        <button onclick="test()" style="display: block;width:80%;height:30px;margin:10px auto;background-color:#3399ff;">test</button>
+    </body>
+    <script>
+        function $(s){
+            return document.querySelector(s)
+        }
+        function test(){
+            var s = $('#input')
+            var v = s.value
+            var arr = v.split(',')
+            if(arr.length!=2){
+                alert('input error.')
+                return
+            }
+            var ele = arr[0].trim()
+            var fn = arr[1].trim()
+            eval('alert('+ele+'.'+fn+')')
+        }
+    </script>
+</html>
