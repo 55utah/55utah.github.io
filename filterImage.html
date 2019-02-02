@@ -387,7 +387,8 @@ window.filterArr = arr
                         // }else{
                         //     alert('你的浏览器不支持此功能，请更换浏览器.')
                         // }
-                        download(blob, imgName, imgType)
+//                         download(blob, imgName, imgType)
+                        window.open(url, '_self')
                         URL.revokeObjectURL(url)
                     }, this.imgType)
                 }
