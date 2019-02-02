@@ -341,6 +341,10 @@ window.filterArr = arr
                     let input = this.$refs.input
                     f = input.files[0]
                     this.imgType = f.type
+//                     
+                    alert(URL)
+                    alert(URL.createObjectURL)
+//                     
                     url = URL.createObjectURL(f)
                     this.src = url
                     this.imgName = f.name
