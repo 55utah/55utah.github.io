@@ -28,3 +28,6 @@ https://macixsq1.github.io/filterImage.html
 
 https://macixsq1.github.io/can-I-use.html
 浏览器兼容性测试
+
+https://macixsq1.github.io/hanoi-index.html
+汉诺塔
