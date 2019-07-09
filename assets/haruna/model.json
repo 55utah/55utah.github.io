@@ -1,0 +1,23 @@
+{
+  "list": [
+    { "name": "22/default", "route": "default"},
+    { "name": "22/2018.bls-winter", "route": "2018.bls-winter"},
+    { "name": "22/2018.bls-summer", "route": "2018.bls-summer"},
+    { "name": "22/2018.spring", "route": "2018.spring"},
+    { "name": "22/2018.lover", "route": "2018.lover"},
+    { "name": "22/2017.cba-normal", "route": "2017.cba-normal"},
+    { "name": "22/2017.cba-super", "route": "2017.cba-super"},
+    { "name": "22/2017.valley", "route": "2017.valley"},
+    { "name": "22/2017.vdays", "route": "2017.vdays"},
+    { "name": "22/2017.tomo-bukatsu.low", "route": "2017.tomo-bukatsu.low"},
+    { "name": "22/2017.tomo-bukatsu.high", "route": "2017.tomo-bukatsu.high"},
+    { "name": "22/2017.summer.normal.1", "route": "2017.summer.normal", "code": "03_1"},
+    { "name": "22/2017.summer.normal.2", "route": "2017.summer.normal", "code": "03_2"},
+    { "name": "22/2017.summer.super.1", "route": "2017.summer.super", "code": "03_1"},
+    { "name": "22/2017.summer.super.2", "route": "2017.summer.super", "code": "03_2"},
+    { "name": "22/2017.school", "route": "2017.school"},
+    { "name": "22/2017.newyear", "route": "2017.newyear"},
+    { "name": "22/2016.xmas.1", "route": "2016.xmas", "code": "03_1"},
+    { "name": "22/2016.xmas.2", "route": "2016.xmas", "code": "03_2"}
+  ]
+}

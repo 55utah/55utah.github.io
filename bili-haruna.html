@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>bilibili看板娘</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		.bt{
+			display: block;
+			margin-top: 10px;
+			border: #209cee 1px solid;
+			color: #209cee;
+			background-color: transparent;
+			padding: 2px; 
+		}
+		.bt:hover{
+			background-color: #209cee;
+			color: #fff;
+		}
+		.bt:active{
+			border: #209cee 1px solid;
+		}
+		.inline{
+			display: inline-block;
+			margin-left: 20px;
+		}
+		.github{
+			position: fixed;
+			top: 0;
+			right: 0;
+			color: #fff;
+			width: 50px;
+			height: 50px;
+		}
+		.title{
+			width: 100%;
+			height: 80px;
+			background-color: #363636;
+			margin-bottom: 10px;
+		}
+		.project{
+			width: 70%;
+			height: 100%;
+			text-align: left;
+			margin: 0 auto;
+		}
+		.pro{
+			line-height: 40px;
+			text-align: left;
+		}
+		.name{
+			color: #fff;
+			font-size: 18px;
+			font-weight: bold;
+		}
+		.tip{
+			color: #aaa;
+			font-size: 15px;
+			font-weight: 500;
+		}
+	</style>
+</head>
+<body>
+<a href="https://github.com/55utah" target="_blank" class="github">
+	<svg viewBox="0 0 250 250"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" class="octo-arm" style="transform-origin: 130px 106px 0px;"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg>
+</a>
+<div class="title">
+	<div class="project">
+		<span class="pro name">Bilibili看板娘</span><br/>
+		<label class="pro tip">模型加载时间可能较长，请耐心等待几秒.</label>
+	</div>
+</div>
+<div id="content">
+	<div class="inline">
+		<label>22娘:</label>
+		<button class="bt" v-if="item.type == 22" v-for="item in list" @click="buildSelect(item.type, item.route, item.code)">{{item.name}}</button>
+	</div>
+	<div class="inline">
+		<label>33娘:</label>
+		<button class="bt" v-if="item.type == 33" v-for="item in list" @click="buildSelect(item.type, item.route, item.code)">{{item.name}}</button>
+	</div>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+<script src="./assets/live2d-widget/L2Dwidget.min.js"></script>
+<script type="text/javascript">
+function init(path) {
+	L2Dwidget.init({
+	    model: {
+	      jsonPath: path
+	    },
+	    react: {
+	      opacityDefault: 1,
+	      opacityOnHover: 1
+	    }
+  	})
+}
+
+function fetch(url) {
+	let xhr = new window.XMLHttpRequest()
+	xhr.responseType = 'json'
+	xhr.open('GET', url, true)
+	let pro = new Promise(function(resolve){
+		xhr.onload = function(){
+			resolve(xhr.response)
+		}
+		xhr.send()
+	})
+	return pro
+}
+
+function build(which, route, code) {
+	const root = `${location.origin}${location.pathname}assets/haruna/${which}`
+	let model = {
+		"type": "Live2D Model Setting",
+		"name": route,
+		"label": which,
+		"model": `${root}/${which}.v2.moc`,
+		"textures": [
+		`${root}/${which}.1024/closet.default/texture_00.png`,
+		`${root}/${which}.1024/closet.${route}/texture_01.png`,
+		`${root}/${which}.1024/closet.${route}/texture_02.png`,
+		`${root}/${which}.1024/closet.${route}/texture_${ code || '03'}.png`
+		],
+		"layout": { "center_x": 0, "center_y": 0.1, "width": 2.3, "height": 2.3 },
+		"motions": {
+			"idle": [
+			  {
+			    "file": `${root}/motions/${which}.v2.idle-01.mtn`,
+			    "fade_in": 2000,
+			    "fade_out": 2000
+			  },
+			  {
+			    "file": `${root}/motions/${which}.v2.idle-02.mtn`,
+			    "fade_in": 2000,
+			    "fade_out": 2000
+			  },
+			  {
+			    "file": `${root}/motions/${which}.v2.idle-03.mtn`,
+			    "fade_in": 100,
+			    "fade_out": 100
+			  }
+			],
+			"tap_body": [
+			  {
+			    "file": `${root}/motions/${which}.v2.touch.mtn`,
+			    "fade_in": 500,
+			    "fade_out": 200
+			  }
+			],
+			"thanking": [
+			  {
+			    "file": `${root}/motions/${which}.v2.thanking.mtn`,
+			    "fade_in": 2000,
+			    "fade_out": 2000
+			  }
+			]
+		}
+	}
+	return URL.createObjectURL(new Blob([JSON.stringify(model)], {type : 'application/json'}))
+}
+
+function parse(json) {
+	return json.list.reduce((h, k) => {
+		k.type = 22
+		h.push(k)
+		h.push({name: k.name.replace(/[2]{2}\//g, '33/'), type: 33, code: k.code, route: k.route})
+		return h
+	}, [])
+}
+
+let vm = new Vue({
+	el: '#content',
+	data: {
+		list: []
+	},
+	methods: {
+		buildSelect(type, route, code){
+			init(build(type, route, code))
+		}
+	},
+	mounted(){
+		let pro = fetch('./assets/haruna/models.json')
+		pro.then(r => {
+			this.list = parse(r)
+			init(build(22, 'default', undefined))
+		}).catch(e => {
+			console.log(e)
+		})
+	}
+})
+</script>
+</html>
