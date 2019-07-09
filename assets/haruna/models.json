@@ -1,6 +1,6 @@
 {
   "list": [
-    { "name": "22/default", "route": "default"},
+    { "name": "22/default", "route": "default.v2"},
     { "name": "22/2018.bls-winter", "route": "2018.bls-winter"},
     { "name": "22/2018.bls-summer", "route": "2018.bls-summer"},
     { "name": "22/2018.spring", "route": "2018.spring"},
