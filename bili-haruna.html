@@ -185,7 +185,7 @@ let vm = new Vue({
 		let pro = fetch('./assets/haruna/models.json')
 		pro.then(r => {
 			this.list = parse(r)
-			init(build(33, 'default', undefined))
+			init(build(22, 'default', undefined))
 		}).catch(e => {
 			console.log(e)
 		})
