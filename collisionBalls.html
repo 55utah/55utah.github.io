@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>仿重力小球</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+    #cas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<div>
+  <canvas id='cas' width="1200" height="600" style="background-color:#000">浏览器不支持canvas</canvas>
+</div>
+</body>
+<script>
+    const canvas = document.getElementById("cas")
+    const ctx = canvas.getContext("2d")
+    const lossRate = 0.8, pxpm = canvas.width / 20
+    window.onload = function() {
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        let balls = [], radius = 12
+        for (let i = 0; i < 100; i++) {
+            balls.push(new Ball(getRandom(radius, canvas.width - radius), getRandom(canvas.height / 2, canvas.height - radius), radius, 0, 1, getRandomColor()))
+        }
+        animate()
+        function animate () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.save()
+            ctx.fillStyle = "rgba(255,255,255,0.2)"
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            ctx.restore()
+            let t = 16 /1000
+            balls.forEach( p => {
+                p.run(t)
+            })
+            collision()
+            requestAnimationFrame(() => {
+                animate()
+            })
+        }
+        function collision () {
+            for (let j = 0; j < balls.length; j++) {
+                for (let k = 0; k < balls.length; k ++) {
+                    if(balls[j] === balls[k]) continue
+                    let b1 = balls[j], b2 = balls[k]
+                    let rc = Math.sqrt((b1.x - b2.x) ** 2 + (b1.y - b2.y) ** 2)
+                    if (Math.ceil(rc) < radius * 2 + 2) {
+                        const cosk = (b1.x - b2.x) / rc, sink = (b1.y - b2.y) / rc
+                        const ax = ((b1.vx - b2.vx) * cosk + (b1.vy - b2.vy) * sink) * cosk
+                        const ay = ((b1.vx - b2.vx) * cosk + (b1.vy - b2.vy) * sink) * sink
+                        b1.vx = (b1.vx - ax) * lossRate
+                        b1.vy = (b1.vy - ay) * lossRate
+                        b2.vx = (b2.vx + ax) * lossRate
+                        b2.vy = (b2.vy + ay) * lossRate
+                        // 强制分离，防止黏连
+                        let cd = ( radius * 2 + 2 - rc ) / 2
+                        b1.x += cd * cosk
+                        b1.y += cd * sink
+                        b2.x -= cd * cosk
+                        b2.y -= cd * sink
+                    }
+                }
+            }
+        }
+        document.body.onclick = e => {
+            const x = e.clientX, y = e.clientY
+            balls.forEach(function(b) {
+                b.vx = (x - b.x) / 40
+                b.vy = (y - b.y) / 40
+            })
+        }
+    }
+    class Ball {
+        constructor (x, y, r, vx, vy, color) {
+            this.x = x
+            this.y = y
+            this.r = r
+            this.vx = vx
+            this.vy = vy
+            this.color = color
+            this.g = 9.8
+        }
+        paint () {
+            ctx.beginPath()
+            ctx.arc(this.x, this.y, this.r - 1, 0, Math.PI * 2)
+            ctx.fillStyle = this.color
+            ctx.fill()
+            ctx.closePath()
+        }
+        run (t) {
+            this.vy = this.vy + this.g * t
+            this.x += this.vx * t * pxpm
+            this.y += this.vy * t * pxpm
+            if(this.x < this.r || this.x > canvas.width - this.r){
+                this.x = this.x < this.r ? this.r : canvas.width - this.r
+                this.vx = - this.vx * lossRate
+            }
+            if(this.y < this.r || this.y > canvas.height - this.r){
+                this.y = this.y < this.r ? this.r : canvas.height - this.r
+                this.vy = - this.vy * lossRate
+            }
+            if(this.vx < 0.1 && this.vx > 0) this.vx = 0
+            if(this.vy > -0.1 && this.vy < 0) this.vy = 0
+            this.paint()
+        }
+    }
+    function getRandom (a, b) {
+      return Math.random() * (b - a) + a;
+    }
+    function getRandomColor () {
+        return `rgb(${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)}, ${parseInt(Math.random() * 255)})`
+    }
+</script>
+</html>

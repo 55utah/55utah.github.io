@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>桌球游戏</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+    }
+    #can {
+      margin: 20px auto;
+      display: block;
+    }
+    .banner{
+        position: fixed;
+        width: 20px;
+        height: 92px;
+        color: orange;
+        top: 50px;
+        left: 100px;
+        font-size: 10px;
+        display: none;
+    }
+    .out{
+        height: 60px;
+        width: 5px;
+        background-color: rgb(255, 120, 0);
+        margin: 0 auto;
+    }
+    .out div{
+        width: 100%;
+        height: 100%;
+        background-color: #ccc;
+    }
+    * {
+        user-select: none;
+        -webkit-user-select: none;
+    }
+  </style>
+</head>
+<body>
+    <img id="table" src="./images/table.PNG" style="display: none;">
+    <img id="white" src="./images/white_ball.png" style="display: none;">
+    <img id="yellow" src="./images/yellow_ball.png" style="display: none;">
+    <div>
+        <canvas id='can' width="800" height="426">浏览器不支持canvas</canvas>
+    </div>
+    <div style="text-align: center; color: #ccc;">
+        <span id="score">分数: 0</span>
+    </div>
+    <div class="banner">
+        <span>MAX</span>
+        <div class="out">
+            <div></div>
+        </div>
+        <span>MIN</span>
+    </div>
+</body>
+<script>
+    const canvas = document.querySelector('#can')
+    const ctx = canvas.getContext("2d")
+    let balls = []
+    const radius = 15, pxpm = canvas.width / 20, border = 20, lossRate = 0.9, friction = 1.5, powerBar = $('.out div'), powerBanner = $('.banner'), scoreDom = $('#score')
+    let staticState = true, dis = 0.04, power = 100, powerDir = 1, score = 0
+    window.onload = () => {
+        init()
+    }
+    let move = []
+    canvas.onmousedown = ev => {
+        if(staticState === false) return
+        move = [ev.clientX - canvas.offsetLeft, ev.clientY - canvas.offsetTop]
+        showBanner()
+        canvas.onmousemove = e => {
+            let x = e.clientX - canvas.offsetLeft, y = e.clientY - canvas.offsetTop
+            move = [x, y]
+        }
+    }
+    canvas.onmouseup = e => {
+        if(staticState && move.length == 2){
+            removeBanner()
+            canvas.onmousemove = null
+            let x1 = balls[0].x, y1 = balls[0].y, x2 = move[0], y2 = move[1]
+            let sink = (y2 - y1) / (Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2))
+            let cosk = (x2 - x1) / (Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2))
+            let p = (100 - power) * 0.8
+            balls[0].vx = p * cosk
+            balls[0].vy = p * sink
+            power = 100
+            move = []
+        }
+    }
+    function $(s){
+        return document.querySelector(s)
+    }
+    function buildInitPositions(){
+        let by = canvas.height / 2, bx = 600
+        arr1 = [[600, by], [600, by + 30], [600, by - 30], [570, by + 15], [570, by - 15], [540, by]]
+        arr2 = [[630, by + 15], [630, by + 45], [630, by - 15], [630, by - 45], [660, by], [660, by + 30], [660, by + 60], [660, by - 30], [660, by - 60]]
+        return [...arr1, ...arr2]
+    }
+    function init(){
+        const width = canvas.width, height = canvas.height
+        balls.push(new Ball(180, height / 2, radius, 0, 0, $('#white')))
+        let arr = buildInitPositions()
+        arr.forEach(p => {
+            balls.push(new Ball(p[0], p[1], radius, 0, 0, $('#yellow')))
+        })
+        animate()
+        function animate(){
+            ctx.clearRect(0, 0, width, height)
+            let t = 16 /1000
+            ctx.drawImage($('#table'), 0, 0)
+            balls.forEach( p => {
+                p.run(t)
+            })
+            // draw line
+            if(staticState && move.length === 2){
+                ctx.beginPath()
+                ctx.arc(move[0], move[1], radius - 2, 0, Math.PI * 2)
+                ctx.moveTo(balls[0].x, balls[0].y)
+                ctx.lineTo(move[0], move[1])
+                ctx.setLineDash([2, 2])
+                ctx.strokeStyle = '#fff'
+                ctx.stroke()
+                ctx.closePath()
+            }
+            // power
+            movePower()
+            collision()
+            requestAnimationFrame(() => {
+                animate()
+            })
+        }
+        function collision(){
+            for (let j = 0; j < balls.length; j++) {
+                for (let k = 0; k < balls.length; k ++) {
+                    if(balls[j] === balls[k]) continue
+                    let b1 = balls[j], b2 = balls[k]
+                    let rc = Math.sqrt((b1.x - b2.x) ** 2 + (b1.y - b2.y) ** 2)
+                    if (Math.ceil(rc) < radius * 2 + 1) {
+                        const cosk = (b1.x - b2.x) / rc, sink = (b1.y - b2.y) / rc
+                        const ax = ((b1.vx - b2.vx) * cosk + (b1.vy - b2.vy) * sink) * cosk
+                        const ay = ((b1.vx - b2.vx) * cosk + (b1.vy - b2.vy) * sink) * sink
+                        b1.vx = (b1.vx - ax) * lossRate
+                        b1.vy = (b1.vy - ay) * lossRate
+                        b2.vx = (b2.vx + ax) * lossRate
+                        b2.vy = (b2.vy + ay) * lossRate
+                        // 强制分离，防止黏连
+                        let cd = ( radius * 2 + 1 - rc ) / 2
+                        b1.x += cd * cosk
+                        b1.y += cd * sink
+                        b2.x -= cd * cosk
+                        b2.y -= cd * sink
+                    }
+                }
+            }
+            let static = 0
+            for(let i = 0; i < balls.length; i++){
+                if(balls[i].vx == 0 && balls[i].vy == 0) static ++
+            }
+        console.log(static)
+            staticState = static === balls.length
+        }
+        function movePower(){
+            if(staticState && move.length === 2){
+                if(power >= 100 || power <= 0){
+                    powerDir = - powerDir
+                    power = power >= 100 ? 99 : 1
+                }else{
+                    power += powerDir
+                }
+                powerBar.style.height = power + '%'
+            }else{
+                powerBar.style.height == '100%'
+            }
+        }
+    }
+    function showBanner(){
+        if(staticState === false) return
+        let x = balls[0].x + canvas.offsetLeft, y = balls[0].y + canvas.offsetTop
+        powerBanner.style.display = 'block'
+        powerBanner.style.left = x - 40 + 'px'
+        powerBanner.style.top = y - 50 + 'px'
+    }
+    function removeBanner(){
+        powerBanner.style.display = 'none'
+    }
+    class Ball {
+        constructor (x, y, r, vx, vy, img) {
+            this.x = x
+            this.y = y
+            this.r = r
+            this.vx = vx
+            this.vy = vy
+            this.img = img
+        }
+        paint () {
+            ctx.drawImage(this.img, this.x - this.r, this.y - this.r)
+        }
+        run (t) {
+            let bool = Math.abs(this.vx) < dis && Math.abs(this.vy) < dis
+            let infx = bool ? 0 : this.vx / Math.abs(this.vx)
+            let infy = bool ? 0 : this.vy / Math.abs(this.vy)
+            this.vx = infx === 0 ? 0 : this.vx - friction * t * infx
+            this.vy = infy === 0 ? 0 : this.vy - friction * t * infy
+            this.x += this.vx * t * pxpm
+            this.y += this.vy * t * pxpm
+            let tmp = this.r + border
+            if(this.x < tmp || this.x > canvas.width - tmp){
+                this.x = this.x < tmp ? tmp : canvas.width - tmp
+                this.vx = - this.vx * lossRate
+            }
+            if(this.y < tmp || this.y > canvas.height - tmp){
+                this.y = this.y < tmp ? tmp : canvas.height - tmp
+                this.vy = - this.vy * lossRate
+            }
+            this.paint()
+            if(this.x < 2 * border || this.x > canvas.width - 2 * border || this.y < 2 * border || this.y > canvas.height - 2 * border){
+                checkBall(this)
+            }
+        }
+    }
+
+
+    function checkBall(ball){
+        const tmp = 15, r = 25, w = canvas.width, h = canvas.height, x = ball.x, y = ball.y
+        let arr = [[15, 15], [15, h - 15], [w - 15, 15], [w - 15, h - 15], [w / 2, 15], [w / 2, h - 15]]
+        for(let p of arr){
+            if(Math.sqrt((x - p[0]) ** 2 + (y - p[1]) ** 2) < 24){
+                if(ball.img === $('#white')) {
+                    ball.x = 180
+                    ball.y = canvas.height / 2
+                    ball.vx =0
+                    ball.xy = 0
+                }else{
+                    balls.splice(balls.indexOf(ball), 1)
+                    score ++
+                    scoreDom.innerText = `分数: ${score}`
+                }
+                break
+            }
+        }
+    }
+    
+</script>
+</html>
