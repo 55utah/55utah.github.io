@@ -3,6 +3,8 @@
 浏览器访问：
 https://55utah.github.io/  主页
 
+https://55utah.github.io/bili-haruna.html  b站-看板娘(live2D)
+
 https://55utah.github.io/blog.html  博客
 
 https://55utah.github.io/chat-in-video.html 
