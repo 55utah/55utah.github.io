@@ -98,7 +98,7 @@
                 }
                 gif.render()
                 // png
-                const png = UPNG.encode(list, w, w, 0, Array(count).fill(delay))
+                const png = UPNG.encode(list, w, eh, 0, Array(count).fill(delay))
                 const arrayPng = new Uint8Array(png)
                 const result = new Blob([arrayPng], {type: 'image/png'})
                 img1.src = window.URL.createObjectURL(result)
@@ -123,7 +123,7 @@
                 newImage.onload = () => {
                     const h = newImage.height
                     const w = newImage.width
-                    parse(p, w, h, value)
+                    parse(p, w, h, Number(value) > 0 ? Number(value) : 200)
                 }
                 newImage.onerror = (e) => {
                     console.log(e)
