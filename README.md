@@ -24,9 +24,6 @@ pdf在线处理工具
 https://55utah.github.io/mine-bomb.html
 扫雷小游戏
 
-https://55utah.github.io/happy-birthday.html
-生日快乐呀~
-
 https://55utah.github.io/filterImage.html
 图片滤镜
 
